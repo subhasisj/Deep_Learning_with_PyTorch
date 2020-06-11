@@ -8,7 +8,7 @@ import pandas as pd
 import os
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt 
-
+# url = 'https://raw.githubusercontent.com/GitiHubi/deepAI/master/data/fraud_dataset_v2.csv'
 def main():
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -44,6 +44,12 @@ def main():
     plt.ylabel('[reconstruction-error]')
     plt.title('AENN training performance')
     plt.savefig('./Plots/training_loss.png')
+
+
+    # save trained encoder model file to disk
+    # encoder_model_name = f"Autoencoder_model_{epoch+1}_Epochs.pth"
+    torch.save(model.state_dict(), config.MODEL_SAVE_PATH)
+
 
 if __name__ == "__main__":
     main()
