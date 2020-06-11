@@ -27,6 +27,7 @@ Initially, we set the dropout probability of each neuron to  p=0.0  (0%), meanin
 class AutoEncoder(nn.Module):
 
     def __init__(self,in_features):
+        
         super(AutoEncoder, self).__init__()
 
         self.encoder = nn.Sequential(
@@ -55,6 +56,9 @@ class AutoEncoder(nn.Module):
                                     nn.Dropout(p=0.3),
 
                                     nn.Linear(in_features=16,out_features=8,bias=True),
+                                    nn.LeakyReLU(negative_slope=0.4,inplace=True),
+                                    nn.Dropout(p=0.3),
+
                                     nn.Linear(in_features=8,out_features=4,bias=True),
                                     nn.LeakyReLU(negative_slope=0.4,inplace=True),
                                     nn.Dropout(p=0.3),
@@ -62,7 +66,52 @@ class AutoEncoder(nn.Module):
                                     nn.Linear(in_features=4,out_features=3,bias=True),
                                     nn.LeakyReLU(negative_slope=0.4,inplace=True),
                                     nn.Dropout(p=0.3)
+        )
+
+        self.decoder = nn.Sequential(
+                                    nn.Linear(in_features=3,out_features=4,bias=True),
+                                    nn.LeakyReLU(negative_slope=0.4,inplace=True),
+                                    nn.Dropout(p=0.3),
+
+                                    nn.Linear(in_features=4,out_features=8,bias=True),
+                                    nn.LeakyReLU(negative_slope=0.4,inplace=True),
+                                    nn.Dropout(p=0.3),
+
+                                    nn.Linear(in_features=8,out_features=16,bias=True),
+                                    nn.LeakyReLU(negative_slope=0.4,inplace=True),
+                                    nn.Dropout(p=0.3),
+
+                                    nn.Linear(in_features=16,out_features=32,bias=True),
+                                    nn.LeakyReLU(negative_slope=0.4,inplace=True),
+                                    nn.Dropout(p=0.3),
+
+                                    nn.Linear(in_features=32,out_features=64,bias=True),
+                                    nn.LeakyReLU(negative_slope=0.4,inplace=True),
+                                    nn.Dropout(p=0.3),
+
+                                    nn.Linear(in_features=64,out_features=128,bias=True),
+                                    nn.LeakyReLU(negative_slope=0.4,inplace=True),
+                                    nn.Dropout(p=0.3),
+
+                                    nn.Linear(in_features=128,out_features=256,bias=True),
+                                    nn.LeakyReLU(negative_slope=0.4,inplace=True),
+                                    nn.Dropout(p=0.3),
+
+                                    nn.Linear(in_features=256,out_features=512,bias=True),
+                                    nn.LeakyReLU(negative_slope=0.4,inplace=True),
+                                    nn.Dropout(p=0.3),
+
+                                    nn.Linear(in_features=512,out_features=in_features,bias=True),
+                                    nn.LeakyReLU(negative_slope=0.4,inplace=True),
+                                    nn.Dropout(p=0.3)
                                     
                                     )
 
-                                    
+    def forward(self,x):
+        x = self.encoder(x)
+        x = self.decoder(x)
+
+        return x
+    
+
+
