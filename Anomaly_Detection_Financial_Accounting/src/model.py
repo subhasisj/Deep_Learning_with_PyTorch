@@ -65,7 +65,7 @@ class AutoEncoder(nn.Module):
 
                                     nn.Linear(in_features=4,out_features=3,bias=True),
                                     nn.LeakyReLU(negative_slope=0.4,inplace=True),
-                                    nn.Dropout(p=0.3)
+                                    # nn.Dropout(p=0.3)
         )
 
         self.decoder = nn.Sequential(
@@ -103,7 +103,7 @@ class AutoEncoder(nn.Module):
 
                                     nn.Linear(in_features=512,out_features=in_features,bias=True),
                                     nn.LeakyReLU(negative_slope=0.4,inplace=True),
-                                    nn.Dropout(p=0.3)
+                                    # nn.Dropout(p=0.3)
                                     
                                     )
 

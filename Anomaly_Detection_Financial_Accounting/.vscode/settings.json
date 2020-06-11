@@ -1,5 +1,4 @@
 {
-    "python.pythonPath": "C:\\Users\\i323570\\Anaconda3\\envs\\pytorch\\python.exe",
     "python.testing.unittestArgs": [
         "-v",
         "-s",

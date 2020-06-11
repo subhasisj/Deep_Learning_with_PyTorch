@@ -2,9 +2,10 @@ import torch
 import torch.nn as nn
 from model import AutoEncoder
 import config
-from training import Training
+from training import Training, Validation
 from dataset import AnomalyDataset
 import pandas as pd 
+import numpy as np
 import os
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt 
@@ -12,10 +13,13 @@ import matplotlib.pyplot as plt
 def main():
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    print(f'Using Device: {device}')
     # read data
-    df = pd.read_csv(os.path.join('Data','categorical_and_numericals.csv'))
+    # df = pd.read_csv(os.path.join('Data','categorical_and_numericals.csv'))
+    df = pd.read_csv(config.DATASET)
     df_train,df_test = train_test_split(df,test_size=0.1)
     df_train = df_train.reset_index(drop=True)
+    df_test.to_csv(os.path.join('Data','testing_data.csv'),index=False)
 
     train_dataset = AnomalyDataset(df_train.values)
     test_dataset = AnomalyDataset(df_test.values)
@@ -27,12 +31,17 @@ def main():
     model.to(device)
 
     trainer = Training(train_data_loader,model,device)
+    validation = Validation(test_data_loader,model,device)
     epoch_losses = []
     for epoch in range(config.EPOCHS):
         print(f'Epoch: {epoch+1} / {config.EPOCHS}:')
         try:
-            reconstruction_loss_for_epoch = trainer.start()
-            epoch_losses.append(reconstruction_loss_for_epoch)
+            training_reconstruction_loss_for_epoch = trainer.start()
+            epoch_losses.append(training_reconstruction_loss_for_epoch)
+            print(f'Training Loss: Epoch {epoch+1} ,Loss: {np.round(training_reconstruction_loss_for_epoch,4)}')
+        
+            validation_reconstruction_loss_for_epoch = validation.start()
+            print(f'Validation Loss: Epoch {epoch+1} ,Loss: {np.round(validation_reconstruction_loss_for_epoch,4)}')
         except Exception as e:
             print(f'Exception occurred during training at epoch {epoch+1} because {str(e)}')
             break

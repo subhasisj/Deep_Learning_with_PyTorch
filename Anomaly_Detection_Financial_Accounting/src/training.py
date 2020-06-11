@@ -23,7 +23,7 @@ class Training:
         # start timer
         start_time = datetime.now()
         for batch,data in tqdm(enumerate(self.dataloader),total=len(self.dataloader)):
-            
+            data = data.to(self.device)
             batch_reconstruction = self.model(data)
             loss_for_batch = self.loss(batch_reconstruction,data)
             reconstruction_losses.append(np.round(loss_for_batch.item(),4))
@@ -40,8 +40,30 @@ class Training:
             self.optimizer.step()
 
             # print training progress each 1'000 mini-batches
-            if batch % 1000 == 0:
-                print(f'Batch {batch}, Loss {np.round(loss_for_batch.item(),4)}')
+            # if batch % 1000 == 0:
+       
+        return np.mean(reconstruction_losses)
+
+
+class Validation(Training):
+    def __init__(self, dataloader, model, device):
+            super().__init__(dataloader, model, device)
+
+    def start(self):
+        self.model.eval()
+        reconstruction_losses = []
+
+        for batch,data in tqdm(enumerate(self.dataloader),total=len(self.dataloader)):
+            
+            data = data.to(self.device)
+            batch_reconstruction = self.model(data)
+            loss_for_batch = self.loss(batch_reconstruction,data)
+            reconstruction_losses.append(np.round(loss_for_batch.item(),4))
+
+
+        # print training progress each 1'000 mini-batches
+        # if batch % 1000 == 0:
+        
         return np.mean(reconstruction_losses)
         
 
